@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penny Stock</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"></head>
+
+
+<body>
+
+    <!-- Stock Image -->
+    <div id="img_container">
+        <img src="Prediction.png">
+    </div>
+
+
+    <!-- User Input -->
+    <div id="form_container">
+
+        <form id="grid_container" action="https://docs.google.com/forms/d/e/1FAIpQLSd7kOgH3G07jp8ibWOA-UfFFvNNsapY8QwiI7v4_euxrZ1v5w/viewform?usp=sf_link">
+
+            <!-- Inputs -->
+            <div class="inputs">
+
+                <!-- Ticker -->
+                <label>Stock Ticker</label>
+                <input type="text" id="ticker_input" name="ticker" placeholder="Example: PLUG">
+
+                <!-- Return Margin -->
+                <label>Return Margin (%)</label>
+                <input type="text" id="margin_input" name="margin" placeholder="Example: 30">
+
+            </div>
+                
+            <!-- Buttons -->
+            <div class="buttons">        
+
+                <!-- Run Model -->
+                <button type="submit" id="run_button">Run Model</button>
+            
+                <br>
+    
+                <!-- Advanced Options -->
+                <button type="button" id="advanced_button">Advanced</button>
+
+            </div>
+        
+            <!-- Advanced Options Dropdown (initially hidden) -->
+            <div id="advanced_options" style="display: none;">
+            <!-- Add your advanced options here -->
+            <label for="advanced_option_1">Hyperparameter 1:</label>
+            <input type="text" id="advanced_option_1" name="hyperparameter_1" placeholder="Context Example: 5 min" value="5 min"><br>
+            <label for="advanced_option_2">Hyperparameter 2:</label>
+            <input type="text" id="advanced_option_2" name="hyperparameter_2" placeholder="Gradient Example: Sigmoid" value="Sigmoid"><br>
+            </div>
+        
+        </form> 
+    </div>
+
+
+
+    <script src="script.js"></script>
+</body>
+</html>

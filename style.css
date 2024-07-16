@@ -1,0 +1,106 @@
+body {
+    background-color: #0E0E0E;
+}
+
+/* Image */
+
+#img_container {
+    height: 472px;
+    width: 10vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    margin-bottom: 50px;
+    margin-top: 50px;
+}
+
+img {
+    height: 100%;
+}
+
+/* Inputs */
+
+#form_container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#grid_container {
+    display: grid;
+    grid-template-columns: 300px 100px;
+    gap: 20px; 
+    padding: 20px; 
+}
+
+
+label {
+    font-family: "Inter", sans-serif;
+    font-weight: 200;
+    font-size: 0.8em;
+    margin-left: 10px;
+    margin-bottom: 2px;
+    color: #F5F5F5
+}
+
+input[type="text"] {
+    background-color: #1B1B1E;
+    width: 250px;
+    height: 20px;
+    padding: 5px;
+    padding-left: 10px;
+    font-size: 14px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    border-style: solid;
+    border-color: #F5F5F5;
+    border-width: 0.2px;
+
+    /* Inner text */
+    color: #F5F5F5;
+    font-family: "Inter", sans-serif;
+    font-weight: 250;
+    font-size: 12px;
+    opacity: 1;
+}
+
+input::placeholder {
+    color: #F5F5F5;
+    font-style: italic;
+    font-family: "Inter", sans-serif;
+    font-weight: 250;
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+button {
+    /* background-color: #1B1B1E; */
+    width: 100px;
+    height: 31px;
+    padding: 5px;
+    font-size: 14px;
+    margin-top: 18.5px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    border-style: solid;
+    border-color: #F5F5F5;
+    border-width: 0.2px;
+    cursor: pointer;
+    text-align: center;
+
+    /* Inner text */
+    color: #F5F5F5;
+    font-family: "Inter", sans-serif;
+    font-weight: 300;
+    font-size: 12px;
+    opacity: 1;
+}
+
+#run_button {
+    background-color: #001C11;
+}
+
+#advanced_button {
+    background-color: #270F02;
+}
