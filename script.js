@@ -1,14 +1,14 @@
 document.getElementById('advanced_button').addEventListener('click', () => {
     // event.preventDefault();
     const advanced_options = document.getElementById('advanced_options');
-    // if (advanced_options.style.visibility === 'hidden') {
-        // advanced_options.style.visibility = 'visible';
-        // advanced_options.style.opacity = 1;
-    // } else {
-        // advanced_options.style.visibility = 'hidden';
-        advanced_options.style.opacity = 0;
-    // }
+    if (advanced_options.style.visibility === 'hidden') {
+        advanced_options.style.visibility = 'visible';
+    } else {
+        advanced_options.style.visibility = 'hidden';
+    }
 });
+
+
 
 document.getElementById('user_input_form').addEventListener('submit', () => {
     // event.preventDefault(); // Delete this

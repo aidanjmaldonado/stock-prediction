@@ -5,7 +5,7 @@ body {
 /* Image */
 
 #img_container {
-    height: 272px;
+    height: 472px;
     width: 10vw;
     display: flex;
     justify-content: center;
@@ -63,10 +63,6 @@ input[type="text"] {
     font-weight: 250;
     font-size: 12px;
     opacity: 1;
-
-    /* Animate */
-    transition: opacity 0.5s ease-out visibility 0.5s ease-out;
-
 }
 
 input::placeholder {
