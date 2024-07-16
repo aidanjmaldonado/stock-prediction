@@ -1,16 +1,17 @@
-// script.js
-document.getElementById('advanced_button').addEventListener('click', function(event) {
-    event.preventDefault();
-    const advancedOptions = document.getElementById('advanced_options');
-    if (advancedOptions.style.display === 'none' || advancedOptions.style.display === '') {
-        advancedOptions.style.display = 'block';
-    } else {
-        advancedOptions.style.display = 'none';
-    }
+document.getElementById('advanced_button').addEventListener('click', () => {
+    // event.preventDefault();
+    const advanced_options = document.getElementById('advanced_options');
+    // if (advanced_options.style.visibility === 'hidden') {
+        // advanced_options.style.visibility = 'visible';
+        // advanced_options.style.opacity = 1;
+    // } else {
+        // advanced_options.style.visibility = 'hidden';
+        advanced_options.style.opacity = 0;
+    // }
 });
 
-document.getElementById('user_input_form').addEventListener('submit', function(event) {
-    event.preventDefault();
+document.getElementById('user_input_form').addEventListener('submit', () => {
+    // event.preventDefault(); // Delete this
     const ticker = document.getElementById('ticker_input').value;
     const margin = document.getElementById('margin_input').value;
 
