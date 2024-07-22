@@ -17,6 +17,10 @@ body {
 
 img {
     height: 100%;
+    border-radius: 15px;
+    border-color: #521d00;
+    border-width: 5px;
+    border-style: solid;
 }
 
 /* Inputs */
