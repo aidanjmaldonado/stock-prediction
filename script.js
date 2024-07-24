@@ -48,6 +48,9 @@ document.getElementById('grid_container').addEventListener('submit', function(e)
       // Wait for the fade-out to complete, then change the src and fade in
       setTimeout(() => {
         stockImage.src = newImage.src; // Update the existing image src once the new image is loaded
+        stockImage.style.borderColor = "#521d00";
+        stockImage.style.borderWidth = '5px;'
+        stockImage.style.borderStyle = "solid";
         stockImage.style.transition = 'opacity 0.1s ease-in, transform 0.3s ease-in';
         stockImage.style.opacity = 1; // Fade in
         stockImage.style.transform = 'scale(1)'; // Scale to original size

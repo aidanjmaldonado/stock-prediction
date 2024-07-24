@@ -146,19 +146,48 @@ def predict(ticker, margin):
     # Create the combined index for plotting
     combined_index = np.arange(len(predict_data_whole))
 
-    # Create
+    # Calculate the target price
+    last_blue_point = known_data_whole['close'].iloc[-1]
+    target_price = last_blue_point * (1 + margin / 100)
+
+    # Find the index in the orange data where the target price is first exceeded
+    orange_data = final_predictions[0]
+    buy_index = np.argmax(orange_data >= target_price) + split_index_whole  # + split_index_whole to adjust the index
+    print("HERE WE GOOOO\n\n\n", buy_index, last_blue_point, orange_data.max(), target_price, "HOTDIGGITYDOG", len(known_data_whole))
+
+    # Create the plot
     plt.figure(figsize=(14, 7))
 
-    # Plot
-    plt.plot(combined_index, predict_data_whole['close'], label='Example "Prediction" Data', color='black', linewidth=3.0)
-    plt.plot(combined_index[:split_index_whole], known_data_whole['close'], label='"Known" Data', color='cyan', linewidth=2.0, linestyle="--")
-    plt.plot(combined_index[split_index_whole:], unknown_data_whole['close'], label='"Unknown" Data', color='orange', linewidth=2.0, linestyle="--")
+    # Plot the lines
+    plt.plot(combined_index[:split_index_whole], known_data_whole['close'], label='"Known" Data', color='blue', linewidth=2.0)
+    plt.plot(combined_index[split_index_whole:], final_predictions[0], label='Model Prediction', color='orange', linewidth=2.0)
 
-    plt.plot(combined_index[split_index_whole:], final_predictions[0], label='Model Prediction', color='purple', linewidth=2.0, linestyle="-")
+    # Shade the area under the lines
+    plt.fill_between(combined_index[:split_index_whole], known_data_whole['close'], color='blue', alpha=0.1)
+    plt.fill_between(combined_index[split_index_whole:], final_predictions[0], color='darkorange', alpha=0.1)
 
+    # Add vertical line with red dot and "now" label
+    plt.vlines(x=split_index_whole - 0.5, ymin=0, ymax=last_blue_point, colors='red', linestyle='--')
+    plt.scatter(split_index_whole - 0.5, last_blue_point, color='red', s=100)  # red dot at the last blue point
+    plt.text(split_index_whole - 0.5, -max(predict_data_whole['close']) * 0.05, 'now', color='red', ha='center', fontsize=12, verticalalignment='bottom')  # label below the x-axis
 
+    # Add vertical line, red dot, and "buy here" label if a suitable point is found
+    if buy_index < len(known_data_whole) + 78 and buy_index != len(known_data_whole):
+        print("WE HAVE SOMETHING HERE YESSIR")
+        buy_price = final_predictions[0][buy_index - split_index_whole]
+        plt.vlines(x=buy_index, ymin=0, ymax=buy_price, colors='red', linestyle='--')
+        plt.scatter(buy_index - 0.1, buy_price, color='red', s=100)  # red dot at the buy point
+        plt.text(buy_index, -max(predict_data_whole['close']) * 0.05, 'buy here', color='red', ha='center', fontsize=12, verticalalignment='bottom')  # label below the x-axis
+    else:
+        print("NOT FOUND AT ALL BOZO", )
 
-    # Format
+    # Custom xticks
+    times = ["9:00", "9:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "1:00", "1:30", "2:00", "2:30", "3:00", "3:30", "4:00"]
+    xticks_positions = np.linspace(len(predict_data_whole) - 100, len(predict_data_whole), len(times))
+
+    plt.xticks(xticks_positions, times)
+
+    # Format the plot
     plt.title(f'{ticker} Prices for the next day')
     plt.xlabel('Time Steps')
     plt.ylabel('Stock Price')
@@ -166,14 +195,12 @@ def predict(ticker, margin):
 
     # Adjust y-axis limits based on the data range
     # plt.ylim(predict_data_whole.iloc[-200:]['close'].min() - 0.2, predict_data_whole.iloc[-200:]['close'].max() + 0.2)
-    plt.xlim(len(predict_data_whole) - 200, len(predict_data_whole))  # Crop view to just the very end
+    plt.xlim(len(predict_data_whole) - 100, len(predict_data_whole))  # Crop view to just the very end
 
-    # Set y-tick locations with a step of 0.05
-    # yticks = np.arange(min(predict_data_whole['close']) // 0.05 * 0.05, (max(predict_data_whole['close']) // 0.05 + 1) * 0.05, 0.05)
-    # plt.yticks(yticks)
-
+    # Save the plot
     plt.savefig('plot.png')
     plt.close()
+
 
 
 
