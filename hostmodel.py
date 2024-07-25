@@ -78,38 +78,39 @@ def predict(ticker, margin):
 
     # Create Prediction Stock dataset
     # try:
-    query = f"SELECT * FROM all_historical WHERE ticker = '{ticker}';" #
+   # Create Prediction Stock dataset
+
+    query = f"SELECT * FROM all_historical WHERE ticker = '{ticker}';" # *NOTE* Cannot run predictions on EVGN_Predict rn because it has 0 valid days, using GSAT
     cursor.execute(query)
-    # if cursor.fetchone() is None:
-        # raise Exception("No results")
-    print(f"Success querying EVGN_Predict")
-    # except:
-    #     sys.stderr.write(f"Failed to select EVGN_Predict")
+    if cursor.fetchone() is None:
+        raise Exception("No results")
 
     # Turn SQlite Database into Pandas Dataframe
     predict_data_whole = pd.read_sql_query(query, sqliteConnection)
+    # predict_data_whole = predict_data_whole[:1000]
 
     # Split into known vs unknown, where unknown is the last 78 entries
     split_index_whole = len(predict_data_whole) - 78
-    known_data_whole = predict_data_whole.iloc[:-78]
+    known_data_whole = predict_data_whole.iloc[-156:-78]
+    print(known_data_whole.shape)
     unknown_data_whole = predict_data_whole.iloc[-78:]
-
+    print(unknown_data_whole.shape)
     # # Features
     # known_features = known_data_whole[['volume', 'volume_weighted_average', 'open', 'close', 'high', 'low']].values
-    known_features = known_data_whole[['close', 'volume', 'time']].values
+    known_features = known_data_whole[['close', 'volume']].values
     known_closes = np.array([known_features[:, 0]]).T
-    known_volume = np.array([known_features[:, 1]]).T
+    # known_volume = np.array([known_features[:, 1]]).T
 
 
     # Normalize features
     predict_close_scaler = MinMaxScaler(feature_range=(0, 1))
-    predict_volume_scaler = MinMaxScaler(feature_range=(0, 1))
+    # predict_volume_scaler = MinMaxScaler(feature_range=(0, 1))
     scaled_close = predict_close_scaler.fit_transform(known_closes)
-    scaled_volume = predict_volume_scaler.fit_transform(known_volume)
+    # scaled_volume = predict_volume_scaler.fit_transform(known_volume)
 
     scaled_known_features = known_features
     known_features[:, 0] = scaled_close[:, 0]
-    known_features[:, 1] = scaled_volume[:, 0]
+    # known_features[:, 1] = scaled_volume[:, 0]
 
 
     # Create dates column from miliseconds
@@ -133,6 +134,7 @@ def predict(ticker, margin):
     # Predict with model
 
     predicted_stock_sequence = model.predict(x_predict)
+    print(predicted_stock_sequence)
 
     # Unscale
     final_predictions = predict_close_scaler.inverse_transform(predicted_stock_sequence)
@@ -158,18 +160,18 @@ def predict(ticker, margin):
     # Create the plot
     plt.figure(figsize=(14, 7))
 
+    print("BEGIN PLOTTING")
     # Plot the lines
-    plt.plot(combined_index[:split_index_whole], known_data_whole['close'], label='"Known" Data', color='blue', linewidth=2.0)
+    print("TRY ONE")
+    plt.plot(combined_index[split_index_whole:]-78, known_data_whole['close'], label='"Known" Data', color='blue', linewidth=2.0)
+    print("BEGIN QUARTER")
     plt.plot(combined_index[split_index_whole:], final_predictions[0], label='Model Prediction', color='orange', linewidth=2.0)
-
+    print("HALF")
     # Shade the area under the lines
-    plt.fill_between(combined_index[:split_index_whole], known_data_whole['close'], color='blue', alpha=0.1)
+    plt.fill_between(combined_index[split_index_whole:]-78, known_data_whole['close'], color='blue', alpha=0.1)
     plt.fill_between(combined_index[split_index_whole:], final_predictions[0], color='darkorange', alpha=0.1)
+    print("DONE PLOTTING")
 
-    # Add vertical line with red dot and "now" label
-    plt.vlines(x=split_index_whole - 0.5, ymin=0, ymax=last_blue_point, colors='red', linestyle='--')
-    plt.scatter(split_index_whole - 0.5, last_blue_point, color='red', s=100)  # red dot at the last blue point
-    plt.text(split_index_whole - 0.5, -max(predict_data_whole['close']) * 0.05, 'now', color='red', ha='center', fontsize=12, verticalalignment='bottom')  # label below the x-axis
 
     # Add vertical line, red dot, and "buy here" label if a suitable point is found
     if buy_index < len(known_data_whole) + 78 and buy_index != len(known_data_whole):
@@ -177,13 +179,21 @@ def predict(ticker, margin):
         buy_price = final_predictions[0][buy_index - split_index_whole]
         plt.vlines(x=buy_index, ymin=0, ymax=buy_price, colors='red', linestyle='--')
         plt.scatter(buy_index - 0.1, buy_price, color='red', s=100)  # red dot at the buy point
-        plt.text(buy_index, -max(predict_data_whole['close']) * 0.05, 'buy here', color='red', ha='center', fontsize=12, verticalalignment='bottom')  # label below the x-axis
+        plt.text(buy_index, -max(predict_data_whole['close']) * 0.05, 'sell now', color='red', ha='center', fontsize=12, verticalalignment='bottom')  # label below the x-axis
+        # Add vertical line with red dot and "now" label
+        plt.vlines(x=split_index_whole - 0.5, ymin=0, ymax=last_blue_point, colors='red', linestyle='--')
+        plt.scatter(split_index_whole - 0.5, last_blue_point, color='red', s=100)  # red dot at the last blue point
+        plt.text(split_index_whole - 0.5, -max(predict_data_whole['close']) * 0.05, 'buy now', color='red', ha='center', fontsize=12, verticalalignment='bottom')  # label below the x-axis
     else:
         print("NOT FOUND AT ALL BOZO", )
+        # Add vertical line with red dot and "now" label
+        plt.vlines(x=split_index_whole - 0.5, ymin=0, ymax=last_blue_point, colors='red', linestyle='--')
+        plt.scatter(split_index_whole - 0.5, last_blue_point, color='red', s=100)  # red dot at the last blue point
+        plt.text(split_index_whole - 0.5, -max(predict_data_whole['close']) * 0.05, 'do not buy', color='red', ha='center', fontsize=12, verticalalignment='bottom')  # label below the x-axis
 
     # Custom xticks
     times = ["9:00", "9:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "1:00", "1:30", "2:00", "2:30", "3:00", "3:30", "4:00"]
-    xticks_positions = np.linspace(len(predict_data_whole) - 100, len(predict_data_whole), len(times))
+    xticks_positions = np.linspace(len(predict_data_whole) - 120, len(predict_data_whole), len(times))
 
     plt.xticks(xticks_positions, times)
 
@@ -191,11 +201,11 @@ def predict(ticker, margin):
     plt.title(f'{ticker} Prices for the next day')
     plt.xlabel('Time Steps')
     plt.ylabel('Stock Price')
-    plt.legend()
+    # plt.legend()
 
     # Adjust y-axis limits based on the data range
     # plt.ylim(predict_data_whole.iloc[-200:]['close'].min() - 0.2, predict_data_whole.iloc[-200:]['close'].max() + 0.2)
-    plt.xlim(len(predict_data_whole) - 100, len(predict_data_whole))  # Crop view to just the very end
+    plt.xlim(len(predict_data_whole) -120, len(predict_data_whole))  # Crop view to just the very end
 
     # Save the plot
     plt.savefig('plot.png')
